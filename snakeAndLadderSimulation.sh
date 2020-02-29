@@ -3,54 +3,78 @@
 #Constants
 POSITION=0
 WINNING_POSITION=100
+NO_PLAY=0
+LADDER=1
+SNAKE=2
 #Variables 
 position=0
-noPlay=0
-ladder=1
-snake=2
-echo "Welcome to Snake and Ladder game"
-# Roll a die to get ranmdom number between 1 to 6
+dieCountForPlayer1=0
+dieCountForPlayer2=0
+positionForPlayer1=0
+positionForPlayer2=0
+echo "Welcome to Snake And Ladder Game"
 #Winning condition
-while(($position!=$WINNING_POSITION))
-do
+function playSnakeAndLadder()
+{
+	position=$1
+	# Roll a die to get a random number between 1 to 6
 	rollDieOutcome=$((RANDOM%6+1))
-	echo "Roll die outcome is:" $rollDieOutcome
 	optionCheck=$((RANDOM%3))
+	#Check options Noplay/Ladder/Snake
 	case $optionCheck in
-		$noPlay)
-			echo "Current position is:"$position
-			echo "You stay in same position:"$position
+		$NO_PLAY)
 			position=$position
-			printf "\n"
 			;;
-		$ladder)
-			echo "Current position is :" $position
-			echo "You encountered a ladder."
+		$LADDER)
 			# Exact winning condition
 			if(( $((position+rollDieOutcome))>100  ))
 			then
 				position=$position
-				echo "Current position is:"$position
 			else
 				position=$((position+rollDieOutcome))
-				echo "New position is:"$position
-			fi
-			printf "\n"
-			;;
-		$snake)
-			echo "You Encountered snake."
-			echo "Current position is :" $position
-			# Exact restart condition
-			if(($position<0))
-			then
-				echo "New position is:" $POSITION
-				position=$POSITION
-			else
-				position=$((position-rollDieOutcome))
-				echo "New position is:" $position
 				position=$position
 			fi
-			printf "\n"
+			;;
+		$SNAKE)
+			# Exact restart condition
+			if(($position>$rollDieOutcome))
+			then
+				position=$((position-rollDieOutcome))
+				position=$position
+			else
+				position=$POSITION
+			fi
 			;;
 	esac
+	echo $position
+}
+
+# Play till 100 for both players
+
+while(($positionForPlayer1!=$WINNING_POSITION && $positionForPlayer2!=$WINNING_POSITION))
+do
+	((dieCountForPlayer1++))
+	positionForPlayer1="$(playSnakeAndLadder $positionForPlayer1)"
+	trackPositionForPlayer1[$dieCountForPlayer1]=$((positionForPlayer1))
+	((dieCountForPlayer2++))
+	positionForPlayer2="$(playSnakeAndLadder $positionForPlayer2)"
+	trackPositionForPlayer2[$dieCountForPlayer2]=$((positionForPlayer2))
 done
+
+# Condition to know which player won
+
+if(($positionForPlayer1==$WINNING_POSITION))
+then
+	echo "Congracts!!!!!player 1 won. you rolled the die for $dieCountForPlayer1 times"
+	for count in ${!trackPositionForPlayer1[@]}
+	do
+		echo "Position at die count $count : ${trackPositionForPlayer1[count]}"
+	done
+else
+	echo "Congracts!!!!!player 2 won. you rolled the die for $dieCountForPlayer2 times"
+	for count in ${!trackPositionForPlayer2[@]}
+	do
+		echo "Position at die count $count : ${trackPositionForPlayer2[count]}"
+	done
+fi
+
