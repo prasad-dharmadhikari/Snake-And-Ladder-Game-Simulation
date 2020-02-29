@@ -55,10 +55,10 @@ while(($positionForPlayer1!=$WINNING_POSITION && $positionForPlayer2!=$WINNING_P
 do
 	((dieCountForPlayer1++))
 	positionForPlayer1="$(playSnakeAndLadder $positionForPlayer1)"
-	trackPositionForPlayer1[$dieCountForPlayer1]=$((positionForPlayer1))
+	echo "Player 1 die count $dieCountForPlayer1 : Position $positionForPlayer1"
 	((dieCountForPlayer2++))
 	positionForPlayer2="$(playSnakeAndLadder $positionForPlayer2)"
-	trackPositionForPlayer2[$dieCountForPlayer2]=$((positionForPlayer2))
+	echo "Player 2 die count $dieCountForPlayer1 : Position $positionForPlayer2"
 done
 
 # Condition to know which player won
@@ -66,15 +66,7 @@ done
 if(($positionForPlayer1==$WINNING_POSITION))
 then
 	echo "Congracts!!!!!player 1 won. you rolled the die for $dieCountForPlayer1 times"
-	for count in ${!trackPositionForPlayer1[@]}
-	do
-		echo "Position at die count $count : ${trackPositionForPlayer1[count]}"
-	done
 else
 	echo "Congracts!!!!!player 2 won. you rolled the die for $dieCountForPlayer2 times"
-	for count in ${!trackPositionForPlayer2[@]}
-	do
-		echo "Position at die count $count : ${trackPositionForPlayer2[count]}"
-	done
 fi
 
